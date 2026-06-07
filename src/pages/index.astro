@@ -11,31 +11,40 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
   <!-- Hero -->
   <section class="hero">
     <div class="hero-content content-width">
-      <p class="hero-eyebrow">Wien hat 30 Freibäder.</p>
-      <h1 class="hero-headline">Warum braucht man<br />ein eigenes Schwimmbad?</h1>
+      <h1 class="hero-eyebrow">Wien hat 30 Freibäder.</h1>
       <p class="hero-sub">
-        Fritten, Sprungturm, Strudel, Wasser-Schwammerl — alles schon da. Und das Beste: du musst
-        es nie putzen.
+        Fritten, Sprungturm, Strudel, Wasser-Schwammerl — alles schon da. Du musst es nie putzen.
       </p>
       <div class="hero-actions">
+        <button id="lazy-btn" class="btn-sun" type="button">🎲 Überrasch mich!</button>
         <a href="/map" class="btn-primary">
           <svg
-            width="18"
-            height="18"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
             aria-hidden="true"
           >
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M12 2v3m0 14v3M2 12h3m14 0h3"></path>
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
           </svg>
-          Zeig mir meins
+          Auf der Karte
         </a>
         <a href="/pools" class="btn-ghost">Alle Bäder →</a>
       </div>
     </div>
+
+    <!-- Lazy mode reveal (inside hero, hidden by default) -->
+    <section id="lazy-section" class="lazy-section" aria-live="polite">
+      <div class="content-width lazy-inner">
+        <p class="lazy-heading">Heute schwimmst du in&nbsp;…</p>
+        <div id="lazy-result" class="lazy-result"></div>
+        <button id="lazy-again" class="lazy-again" type="button">🔄 Nochmal!</button>
+      </div>
+    </section>
+
     <div class="hero-wave" aria-hidden="true">
       <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
         <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="var(--color-sand)"></path>
@@ -62,6 +71,15 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
       <p class="manifesto-stat"><span>∞</span> Fritten verfügbar</p>
     </div>
   </section>
+
+  <!-- Hidden pool data for JS lazy picker — pre-rendered at build time -->
+  <div id="pool-storage" hidden aria-hidden="true">
+    {(pools as Pool[]).map((pool) => (
+      <div data-pool-id={pool.id}>
+        <PoolCard pool={pool} />
+      </div>
+    ))}
+  </div>
 </Base>
 
 <style>
@@ -78,17 +96,11 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
   }
 
   .hero-eyebrow {
-    font-size: var(--text-lg);
-    color: var(--color-water);
-    font-weight: 600;
-    margin-bottom: var(--space-4);
-  }
-
-  .hero-headline {
     font-family: var(--font-display);
     font-size: var(--text-hero);
     line-height: 1.05;
     letter-spacing: -0.02em;
+    color: var(--color-white);
     margin-bottom: var(--space-6);
   }
 
@@ -103,8 +115,31 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
   .hero-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    gap: var(--space-4);
     flex-wrap: wrap;
+  }
+
+  .btn-sun {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--color-sun);
+    color: var(--color-text);
+    border: none;
+    border-radius: 999px;
+    padding: var(--space-3) var(--space-8);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .btn-sun:hover {
+    background: #e8941a;
+    transform: scale(1.04);
   }
 
   .btn-ghost {
@@ -122,6 +157,70 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
     text-decoration: none;
   }
 
+  /* Lazy reveal */
+  .lazy-section {
+    display: none;
+    padding-block: var(--space-12);
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+  }
+
+  .lazy-section.visible {
+    display: block;
+    animation: fade-slide 0.4s ease-out both;
+  }
+
+  @keyframes fade-slide {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .lazy-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-8);
+  }
+
+  .lazy-heading {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    letter-spacing: -0.02em;
+    color: var(--color-white);
+    text-align: center;
+  }
+
+  .lazy-result {
+    width: 100%;
+    max-width: 24rem;
+  }
+
+  .lazy-again {
+    background: none;
+    border: 2px solid color-mix(in srgb, var(--color-white) 40%, transparent);
+    color: color-mix(in srgb, var(--color-white) 80%, transparent);
+    border-radius: 999px;
+    padding: var(--space-2) var(--space-6);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .lazy-again:hover {
+    border-color: var(--color-white);
+    color: var(--color-white);
+  }
+
   .hero-wave {
     display: block;
     line-height: 0;
@@ -132,6 +231,7 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
     height: 80px;
   }
 
+  /* Featured */
   .section-gap {
     padding-block: var(--space-24);
   }
@@ -155,6 +255,7 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
     text-align: center;
   }
 
+  /* Manifesto */
   .manifesto {
     background: var(--color-water);
     color: var(--color-white);
@@ -181,3 +282,30 @@ const featured = (pools as Pool[]).filter((p) => p.featured)
     line-height: 1.1;
   }
 </style>
+
+<script>
+  // Cast to non-null — these elements are always present in this page's HTML
+  const lazyBtn = document.getElementById('lazy-btn') as HTMLButtonElement
+  const lazySection = document.getElementById('lazy-section') as HTMLElement
+  const lazyResult = document.getElementById('lazy-result') as HTMLElement
+  const lazyAgain = document.getElementById('lazy-again') as HTMLButtonElement
+  const poolItems = Array.from(
+    document.querySelectorAll<HTMLElement>('#pool-storage [data-pool-id]'),
+  )
+
+  function pickRandom() {
+    const idx = Math.floor(Math.random() * poolItems.length)
+    lazyResult.innerHTML = poolItems[idx].innerHTML
+    if (!lazySection.classList.contains('visible')) {
+      lazySection.classList.add('visible')
+    }
+    lazySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
+
+  lazyBtn.addEventListener('click', () => {
+    pickRandom()
+    lazyBtn.textContent = '🎲 Nochmal?'
+  })
+
+  lazyAgain.addEventListener('click', pickRandom)
+</script>
