@@ -119,6 +119,63 @@ Pill shape, `--color-water` background at 15% opacity, `--color-deep` text.
 .btn-primary:hover { background: var(--color-deep); }
 ```
 
+### Amenity Chips
+
+Small icon + label pills displayed on pool cards and detail pages. Only render chips where `amenities[key] === true` — never show `null` or `false` entries.
+
+```html
+<ul class="amenities">
+  <li class="amenity"><span aria-hidden="true">🛝</span> Rutsche</li>
+  <li class="amenity"><span aria-hidden="true">🍟</span> Fritten</li>
+</ul>
+```
+
+```css
+.amenities { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; }
+.amenity {
+  font-size: var(--text-xs);
+  font-family: var(--font-body);
+  background: color-mix(in srgb, var(--color-water) 12%, transparent);
+  color: var(--color-deep);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+}
+```
+
+Amenity icon map (inline, no icon library):
+
+| Key | Icon | Label |
+|---|---|---|
+| `rutsche` | 🛝 | Rutsche |
+| `kinderbecken` | 👶 | Kinderbecken |
+| `sprungturm` | 🤸 | Sprungturm |
+| `wasser_schwammerl` | 🍄 | Wasser-Schwammerl |
+| `sauna` | 🧖 | Sauna |
+| `fritten` | 🍟 | Fritten |
+| `strudel` | 🥐 | Strudel |
+| `beachvolleyball` | 🏐 | Beachvolleyball |
+| `sandstrand` | 🏖️ | Sandstrand |
+| `fkk` | 🌿 | FKK |
+
+On pool cards: show max 4 chips, prioritise food + key features. On detail pages: show all confirmed amenities.
+
+### Opening Hours Display
+
+```html
+<div class="hours">
+  <span class="hours-row"><strong>Mo–Fr</strong> 09:00–20:00</span>
+  <span class="hours-row"><strong>Sa–So</strong> 07:00–20:00</span>
+  <span class="hours-note">Bei Hitzewarnung bis 21:00</span>
+</div>
+```
+
+```css
+.hours { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); }
+.hours-note { color: var(--color-text-muted); font-style: italic; }
+```
+
+If `weekday === weekend`, show a single row "Täglich HH:MM–HH:MM" instead of two.
+
 ### Map Marker
 Custom Leaflet marker: circle in `--color-water`, white pool icon inside.
 Active/selected: `--color-sun` fill.

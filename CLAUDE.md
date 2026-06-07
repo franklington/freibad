@@ -53,10 +53,44 @@ scripts/
   "since": 1907,
   "officialUrl": "https://www.wien.gv.at/freizeit/strandbad-gaensehaeufel",
   "season": { "open": "05-01", "close": "09-15" },
+  "hours": {
+    "weekday": "09:00–20:00",
+    "weekend": "07:00–20:00",
+    "note": "Bei Hitzewarnung bis 21:00 geöffnet"
+  },
+  "amenities": {
+    "rutsche":          true,
+    "kinderbecken":     true,
+    "sprungturm":       true,
+    "wasser_schwammerl": false,
+    "sauna":            false,
+    "fritten":          true,
+    "strudel":          true,
+    "beachvolleyball":  true,
+    "sandstrand":       true,
+    "fkk":              true
+  },
   "tags": ["Sprungturm", "Sandstrand", "FKK", "Insel"],
   "featured": true
 }
 ```
+
+### Amenities reference
+
+| Key | Label (DE) | What it means |
+|---|---|---|
+| `rutsche` | Rutsche | Water slide |
+| `kinderbecken` | Kinderbecken | Shallow children's pool |
+| `sprungturm` | Sprungturm | Diving tower |
+| `wasser_schwammerl` | Wasser-Schwammerl | The classic Austrian mushroom-shaped spray feature |
+| `sauna` | Sauna | On-site sauna |
+| `fritten` | Fritten | French fries / snack stall |
+| `strudel` | Strudel | Strudel / pastry on site |
+| `beachvolleyball` | Beachvolleyball | Beach volleyball court |
+| `sandstrand` | Sandstrand | Sandy beach area |
+| `fkk` | FKK-Bereich | Nudist section |
+
+Set unknown amenities to `null` (not `false`) — `false` means confirmed absent, `null` means not yet verified. This distinction matters for the UI: `null` amenities are hidden, `false` amenities can show a "not available" state if needed.
 
 Enrichment data (`src/data/enrichment/{id}.json`):
 

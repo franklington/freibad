@@ -18,11 +18,32 @@ Add a new pool entry to the site. Provide the pool name or ID to get started.
   "since": null,
   "officialUrl": "https://www.wien.gv.at/freizeit/...",
   "season": { "open": "MM-DD", "close": "MM-DD" },
+  "hours": {
+    "weekday": "09:00–20:00",
+    "weekend": "09:00–20:00",
+    "note": null
+  },
+  "amenities": {
+    "rutsche":           null,
+    "kinderbecken":      null,
+    "sprungturm":        null,
+    "wasser_schwammerl": null,
+    "sauna":             null,
+    "fritten":           null,
+    "strudel":           null,
+    "beachvolleyball":   null,
+    "sandstrand":        null,
+    "fkk":               null
+  },
   "tags": [],
   "featured": false
 }
 ```
 For coordinates: look up the pool on OpenStreetMap (openstreetmap.org) to get accurate lat/lng.
+
+**Hours**: Check the official Wien page or `wien.gv.at/freizeit/baeder` for current hours. Use `null` for `note` if there are no special conditions.
+
+**Amenities**: Use `true` if confirmed present, `false` if confirmed absent, `null` if unknown. Check the official pool page, OSM tags, or recent visitor reviews. `null` values are hidden in the UI — only set `false` when you are certain the feature doesn't exist.
 
 3. **Create an enrichment file** at `src/data/enrichment/{id}.json`:
 ```json
