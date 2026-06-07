@@ -12,19 +12,19 @@
     "hours": {
       "weekday": "09:00–20:00",
       "weekend": "07:00–20:00",
-      "note": "Bei Hitzewarnung bis 21:00 geöffnet"
+      "note": null
     },
     "amenities": {
-      "rutsche": true,
-      "kinderbecken": true,
-      "sprungturm": true,
-      "wasser_schwammerl": true,
-      "sauna": false,
-      "fritten": true,
-      "strudel": true,
-      "beachvolleyball": true,
-      "sandstrand": true,
-      "fkk": true
+      "rutsche": null,
+      "kinderbecken": null,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": null,
+      "fritten": null,
+      "strudel": null,
+      "beachvolleyball": null,
+      "sandstrand": null,
+      "fkk": null
     },
     "tags": ["Sprungturm", "Sandstrand", "FKK", "Insel"],
     "featured": true
@@ -45,16 +45,16 @@
       "note": null
     },
     "amenities": {
-      "rutsche": true,
-      "kinderbecken": true,
-      "sprungturm": false,
-      "wasser_schwammerl": true,
-      "sauna": false,
-      "fritten": true,
-      "strudel": true,
-      "beachvolleyball": false,
-      "sandstrand": false,
-      "fkk": false
+      "rutsche": null,
+      "kinderbecken": null,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": null,
+      "fritten": null,
+      "strudel": null,
+      "beachvolleyball": null,
+      "sandstrand": null,
+      "fkk": null
     },
     "tags": ["Wienerwald", "Panorama", "Familienfreundlich"],
     "featured": true
@@ -75,16 +75,16 @@
       "note": null
     },
     "amenities": {
-      "rutsche": true,
-      "kinderbecken": true,
-      "sprungturm": true,
-      "wasser_schwammerl": true,
-      "sauna": false,
-      "fritten": true,
-      "strudel": false,
-      "beachvolleyball": false,
-      "sandstrand": false,
-      "fkk": false
+      "rutsche": null,
+      "kinderbecken": null,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": null,
+      "fritten": null,
+      "strudel": null,
+      "beachvolleyball": null,
+      "sandstrand": null,
+      "fkk": null
     },
     "tags": ["Sprungturm", "Urbaner Klassiker"],
     "featured": false
@@ -105,16 +105,16 @@
       "note": null
     },
     "amenities": {
-      "rutsche": false,
-      "kinderbecken": true,
-      "sprungturm": false,
-      "wasser_schwammerl": true,
-      "sauna": false,
-      "fritten": true,
-      "strudel": true,
-      "beachvolleyball": false,
-      "sandstrand": false,
-      "fkk": false
+      "rutsche": null,
+      "kinderbecken": null,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": null,
+      "fritten": null,
+      "strudel": null,
+      "beachvolleyball": null,
+      "sandstrand": null,
+      "fkk": null
     },
     "tags": ["Historisch", "Schlosspark", "Ruhig"],
     "featured": true
