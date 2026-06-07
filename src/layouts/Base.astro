@@ -1,0 +1,124 @@
+---
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description = 'Entdecke die schönsten Freibäder in Wien und Umgebung.' } =
+  Astro.props
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title} — Freibad Wien</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="content-width header-inner">
+        <a href="/" class="site-logo">Freibad Wien</a>
+        <nav>
+          <a href="/">Start</a>
+          <a href="/map">Karte</a>
+          <a href="/pools">Alle Bäder</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="content-width footer-inner">
+        <p>
+          Mit ❤ für Wiens Freibäder. Keine Werbung, keine Ahnung von Privatschwimmbädern.
+        </p>
+        <p class="footer-credits">
+          Daten: <a href="https://data.gv.at" target="_blank" rel="noopener">data.gv.at</a> (CC BY
+          4.0) &amp; <a href="https://www.openstreetmap.org" target="_blank" rel="noopener"
+            >OpenStreetMap</a
+          > (ODbL). Bilder: Wikimedia Commons, Wien Museum.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    background: var(--color-deep);
+    color: var(--color-white);
+    padding-block: var(--space-4);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-logo {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    color: var(--color-white);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  nav {
+    display: flex;
+    gap: var(--space-6);
+  }
+
+  nav a {
+    color: color-mix(in srgb, var(--color-white) 80%, transparent);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  nav a:hover {
+    color: var(--color-white);
+    text-decoration: none;
+  }
+
+  .site-footer {
+    background: var(--color-deep);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
+    padding-block: var(--space-12);
+    margin-top: var(--space-24);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .footer-credits {
+    font-size: var(--text-xs);
+    opacity: 0.7;
+  }
+
+  .site-footer a {
+    color: var(--color-water);
+  }
+</style>

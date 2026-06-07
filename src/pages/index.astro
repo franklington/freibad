@@ -1,0 +1,183 @@
+---
+import Base from '../layouts/Base.astro'
+import PoolCard from '../components/PoolCard.astro'
+import pools from '../data/pools.json'
+import type { Pool } from '../types/pool'
+
+const featured = (pools as Pool[]).filter((p) => p.featured)
+---
+
+<Base title="Dein Sommer wartet">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content content-width">
+      <p class="hero-eyebrow">Wien hat 30 Freibäder.</p>
+      <h1 class="hero-headline">Warum braucht man<br />ein eigenes Schwimmbad?</h1>
+      <p class="hero-sub">
+        Fritten, Sprungturm, Strudel, Wasser-Schwammerl — alles schon da. Und das Beste: du musst
+        es nie putzen.
+      </p>
+      <div class="hero-actions">
+        <a href="/map" class="btn-primary">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 2v3m0 14v3M2 12h3m14 0h3"></path>
+          </svg>
+          Zeig mir meins
+        </a>
+        <a href="/pools" class="btn-ghost">Alle Bäder →</a>
+      </div>
+    </div>
+    <div class="hero-wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="var(--color-sand)"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Featured pools -->
+  <section class="featured section-gap content-width">
+    <h2 class="section-title">Die Lieblinge der Stadt</h2>
+    <div class="pool-grid">
+      {featured.map((pool) => <PoolCard pool={pool} />)}
+    </div>
+    <div class="section-cta">
+      <a href="/pools" class="btn-primary">Alle Bäder entdecken</a>
+    </div>
+  </section>
+
+  <!-- Manifesto strip -->
+  <section class="manifesto">
+    <div class="content-width manifesto-inner">
+      <p class="manifesto-stat"><span>0</span> Mal pro Jahr Poolpflege</p>
+      <p class="manifesto-stat"><span>~30</span> Bäder in Wien</p>
+      <p class="manifesto-stat"><span>∞</span> Fritten verfügbar</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    background: var(--color-deep);
+    color: var(--color-white);
+    padding-top: var(--space-24);
+    padding-bottom: 0;
+    position: relative;
+  }
+
+  .hero-content {
+    padding-bottom: var(--space-16);
+  }
+
+  .hero-eyebrow {
+    font-size: var(--text-lg);
+    color: var(--color-water);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-sub {
+    font-size: var(--text-lg);
+    color: color-mix(in srgb, var(--color-white) 80%, transparent);
+    max-width: 40rem;
+    margin-bottom: var(--space-8);
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+  }
+
+  .btn-ghost {
+    color: var(--color-white);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: var(--text-base);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .btn-ghost:hover {
+    opacity: 1;
+    color: var(--color-white);
+    text-decoration: none;
+  }
+
+  .hero-wave {
+    display: block;
+    line-height: 0;
+  }
+
+  .hero-wave svg {
+    width: 100%;
+    height: 80px;
+  }
+
+  .section-gap {
+    padding-block: var(--space-24);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    color: var(--color-deep);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-8);
+  }
+
+  .pool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: var(--space-6);
+  }
+
+  .section-cta {
+    margin-top: var(--space-12);
+    text-align: center;
+  }
+
+  .manifesto {
+    background: var(--color-water);
+    color: var(--color-white);
+    padding-block: var(--space-16);
+  }
+
+  .manifesto-inner {
+    display: flex;
+    justify-content: space-around;
+    gap: var(--space-8);
+    flex-wrap: wrap;
+  }
+
+  .manifesto-stat {
+    text-align: center;
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .manifesto-stat span {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    line-height: 1.1;
+  }
+</style>
