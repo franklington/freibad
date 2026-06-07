@@ -121,19 +121,38 @@ Image metadata (`public/images/pools/{id}/metadata.json`):
 ## Dev Commands
 
 ```bash
-npm run dev       # Local dev server at localhost:4321
-npm run build     # Static build to dist/
-npm run preview   # Preview the built site
+npm run dev            # Local dev server at localhost:4321
+npm run build          # Static build to dist/
+npm run preview        # Preview the built site
+
+npm run check          # Lint + format + typecheck (run before every commit)
+npm run lint           # ESLint + Stylelint
+npm run lint:fix       # Auto-fix lint issues
+npm run format:fix     # Auto-fix formatting
+npm run typecheck      # TypeScript type check only
+
+npm run test           # Unit tests (Vitest)
+npm run test:e2e       # End-to-end tests (Playwright)
+npm run test:data      # Data integrity / schema validation only
+npm run test:coverage  # Unit tests with coverage
 
 node scripts/fetch-pools.js    # Refresh pool coordinates from Vienna WFS + OSM
 node scripts/fetch-images.js   # Curate and download images for all pools
 ```
 
-## Adding Content
+## Skills
 
-Use `/add-pool` to scaffold a new pool entry correctly.
-Use `/fetch-images` to curate images for a specific pool.
-Use `/new-story` to scaffold an enrichment file for the storytelling section.
+| Skill | When to use |
+|---|---|
+| `/add-pool` | Add a new Freibad to the data files |
+| `/fetch-images` | Curate and download images for a pool |
+| `/new-story` | Scaffold the storytelling page for a pool |
+| `/test` | Run the right tests for a given change |
+| `/lint` | Check and fix code quality before committing |
+
+## Types
+
+`src/types/pool.ts` is the source of truth for TypeScript interfaces (`Pool`, `Amenities`, `Enrichment`). Keep it in sync with the JSON schema above. See `/lint` for the full type definitions.
 
 ## Deployment
 
