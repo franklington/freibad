@@ -1,0 +1,122 @@
+[
+  {
+    "id": "gaensehaeufel",
+    "name": "Strandbad Gänsehäufel",
+    "type": "freibad",
+    "district": 22,
+    "address": "Moissigasse 21, 1220 Wien",
+    "coordinates": [48.2333, 16.4760],
+    "since": 1907,
+    "officialUrl": "https://www.wien.gv.at/freizeit/strandbad-gaensehaeufel",
+    "season": { "open": "05-01", "close": "09-15" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "07:00–20:00",
+      "note": "Bei Hitzewarnung bis 21:00 geöffnet"
+    },
+    "amenities": {
+      "rutsche": true,
+      "kinderbecken": true,
+      "sprungturm": true,
+      "wasser_schwammerl": true,
+      "sauna": false,
+      "fritten": true,
+      "strudel": true,
+      "beachvolleyball": true,
+      "sandstrand": true,
+      "fkk": true
+    },
+    "tags": ["Sprungturm", "Sandstrand", "FKK", "Insel"],
+    "featured": true
+  },
+  {
+    "id": "krapfenwaldlbad",
+    "name": "Krapfenwaldlbad",
+    "type": "freibad",
+    "district": 19,
+    "address": "Krapfenwaldgasse 65–73, 1190 Wien",
+    "coordinates": [48.2600, 16.3420],
+    "since": 1928,
+    "officialUrl": "https://www.wien.gv.at/freizeit/krapfenwaldlbad",
+    "season": { "open": "05-01", "close": "09-15" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "09:00–20:00",
+      "note": null
+    },
+    "amenities": {
+      "rutsche": true,
+      "kinderbecken": true,
+      "sprungturm": false,
+      "wasser_schwammerl": true,
+      "sauna": false,
+      "fritten": true,
+      "strudel": true,
+      "beachvolleyball": false,
+      "sandstrand": false,
+      "fkk": false
+    },
+    "tags": ["Wienerwald", "Panorama", "Familienfreundlich"],
+    "featured": true
+  },
+  {
+    "id": "kongressbad",
+    "name": "Kongressbad",
+    "type": "freibad",
+    "district": 16,
+    "address": "Julius-Meinl-Gasse 7A, 1160 Wien",
+    "coordinates": [48.2145, 16.3280],
+    "since": 1928,
+    "officialUrl": "https://www.wien.gv.at/freizeit/kongressbad",
+    "season": { "open": "05-01", "close": "09-15" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "07:00–20:00",
+      "note": null
+    },
+    "amenities": {
+      "rutsche": true,
+      "kinderbecken": true,
+      "sprungturm": true,
+      "wasser_schwammerl": true,
+      "sauna": false,
+      "fritten": true,
+      "strudel": false,
+      "beachvolleyball": false,
+      "sandstrand": false,
+      "fkk": false
+    },
+    "tags": ["Sprungturm", "Urbaner Klassiker"],
+    "featured": false
+  },
+  {
+    "id": "schoenbrunnerbad",
+    "name": "Schönbrunnerbad",
+    "type": "freibad",
+    "district": 13,
+    "address": "Schönbrunner Schloßstraße 47, 1130 Wien",
+    "coordinates": [48.1840, 16.3110],
+    "since": 1924,
+    "officialUrl": "https://www.wien.gv.at/freizeit/schoenbrunnerbad",
+    "season": { "open": "05-01", "close": "09-15" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "09:00–20:00",
+      "note": null
+    },
+    "amenities": {
+      "rutsche": false,
+      "kinderbecken": true,
+      "sprungturm": false,
+      "wasser_schwammerl": true,
+      "sauna": false,
+      "fritten": true,
+      "strudel": true,
+      "beachvolleyball": false,
+      "sandstrand": false,
+      "fkk": false
+    },
+    "tags": ["Historisch", "Schlosspark", "Ruhig"],
+    "featured": true
+  }
+]

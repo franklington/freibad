@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro'
+import PoolCard from '../../components/PoolCard.astro'
+import pools from '../../data/pools.json'
+import type { Pool } from '../../types/pool'
+
+const allPools = pools as Pool[]
+const sorted = [...allPools].sort((a, b) => a.name.localeCompare(b.name, 'de'))
+---
+
+<Base title="Alle Freibäder" description="Alle Freibäder in Wien auf einen Blick.">
+  <div class="content-width page">
+    <header class="page-header">
+      <h1 class="page-title">Alle Freibäder</h1>
+      <p class="page-sub">{allPools.length} Bäder in Wien und Umgebung</p>
+    </header>
+    <div class="pool-grid">
+      {sorted.map((pool) => <PoolCard pool={pool} />)}
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-block: var(--space-16);
+  }
+
+  .page-header {
+    margin-bottom: var(--space-12);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    color: var(--color-deep);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-2);
+  }
+
+  .page-sub {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  .pool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: var(--space-6);
+  }
+</style>
