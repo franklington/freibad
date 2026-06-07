@@ -8,17 +8,17 @@
     "coordinates": [48.2333, 16.4760],
     "since": 1907,
     "officialUrl": "https://www.wien.gv.at/freizeit/strandbad-gaensehaeufel",
-    "season": { "open": "05-01", "close": "09-15" },
+    "season": { "open": "05-02", "close": "09-13" },
     "hours": {
       "weekday": "09:00–20:00",
       "weekend": "07:00–20:00",
-      "note": "Bei Hitzewarnung bis 21:00 geöffnet"
+      "note": null
     },
     "amenities": {
       "rutsche": true,
       "kinderbecken": true,
       "sprungturm": true,
-      "wasser_schwammerl": true,
+      "wasser_schwammerl": null,
       "sauna": false,
       "fritten": true,
       "strudel": true,
@@ -36,9 +36,9 @@
     "district": 19,
     "address": "Krapfenwaldgasse 65–73, 1190 Wien",
     "coordinates": [48.2600, 16.3420],
-    "since": 1928,
+    "since": 1923,
     "officialUrl": "https://www.wien.gv.at/freizeit/krapfenwaldlbad",
-    "season": { "open": "05-01", "close": "09-15" },
+    "season": { "open": "05-02", "close": "09-13" },
     "hours": {
       "weekday": "09:00–20:00",
       "weekend": "09:00–20:00",
@@ -47,14 +47,14 @@
     "amenities": {
       "rutsche": true,
       "kinderbecken": true,
-      "sprungturm": false,
-      "wasser_schwammerl": true,
-      "sauna": false,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": null,
       "fritten": true,
-      "strudel": true,
-      "beachvolleyball": false,
+      "strudel": null,
+      "beachvolleyball": true,
       "sandstrand": false,
-      "fkk": false
+      "fkk": null
     },
     "tags": ["Wienerwald", "Panorama", "Familienfreundlich"],
     "featured": true
@@ -68,7 +68,7 @@
     "coordinates": [48.2145, 16.3280],
     "since": 1928,
     "officialUrl": "https://www.wien.gv.at/freizeit/kongressbad",
-    "season": { "open": "05-01", "close": "09-15" },
+    "season": { "open": "05-02", "close": "09-13" },
     "hours": {
       "weekday": "09:00–20:00",
       "weekend": "07:00–20:00",
@@ -77,16 +77,16 @@
     "amenities": {
       "rutsche": true,
       "kinderbecken": true,
-      "sprungturm": true,
-      "wasser_schwammerl": true,
+      "sprungturm": false,
+      "wasser_schwammerl": null,
       "sauna": false,
       "fritten": true,
-      "strudel": false,
-      "beachvolleyball": false,
+      "strudel": null,
+      "beachvolleyball": true,
       "sandstrand": false,
-      "fkk": false
+      "fkk": null
     },
-    "tags": ["Sprungturm", "Urbaner Klassiker"],
+    "tags": ["Ottakring", "Klassiker", "Urbanes Bad"],
     "featured": false
   },
   {
@@ -98,25 +98,175 @@
     "coordinates": [48.1840, 16.3110],
     "since": 1924,
     "officialUrl": "https://www.wien.gv.at/freizeit/schoenbrunnerbad",
-    "season": { "open": "05-01", "close": "09-15" },
+    "season": { "open": "05-02", "close": "09-13" },
     "hours": {
       "weekday": "09:00–20:00",
       "weekend": "09:00–20:00",
       "note": null
     },
     "amenities": {
-      "rutsche": false,
+      "rutsche": null,
       "kinderbecken": true,
-      "sprungturm": false,
-      "wasser_schwammerl": true,
-      "sauna": false,
-      "fritten": true,
-      "strudel": true,
-      "beachvolleyball": false,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": true,
+      "fritten": null,
+      "strudel": null,
+      "beachvolleyball": true,
       "sandstrand": false,
       "fkk": false
     },
-    "tags": ["Historisch", "Schlosspark", "Ruhig"],
+    "tags": ["Schlosspark", "Sauna", "Ruhig", "Historisch"],
+    "featured": true
+  },
+  {
+    "id": "angelibad",
+    "name": "Strandbad Angelibad",
+    "type": "freibad",
+    "district": 21,
+    "address": "An der Oberen Alten Donau, 1210 Wien",
+    "coordinates": [48.2400, 16.4500],
+    "since": 1888,
+    "officialUrl": "https://www.wien.gv.at/freizeit/angelibad",
+    "season": { "open": "05-02", "close": "09-13" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "09:00–20:00",
+      "note": null
+    },
+    "amenities": {
+      "rutsche": null,
+      "kinderbecken": true,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": false,
+      "fritten": true,
+      "strudel": null,
+      "beachvolleyball": true,
+      "sandstrand": true,
+      "fkk": null
+    },
+    "tags": ["Strand", "Alte Donau", "Hund willkommen"],
+    "featured": false
+  },
+  {
+    "id": "altedonau",
+    "name": "Bundesbad Alte Donau",
+    "type": "freibad",
+    "district": 22,
+    "address": "Arbeiterstrandbadstraße 93, 1220 Wien",
+    "coordinates": [48.2410, 16.4630],
+    "since": null,
+    "officialUrl": "https://www.burghauptmannschaft.at/Betriebe/Bundesbad-Alte-Donau.html",
+    "season": { "open": "04-25", "close": "09-13" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "09:00–20:00",
+      "note": "Öffnet früher als die Stadtbäder"
+    },
+    "amenities": {
+      "rutsche": null,
+      "kinderbecken": true,
+      "sprungturm": null,
+      "wasser_schwammerl": null,
+      "sauna": null,
+      "fritten": true,
+      "strudel": null,
+      "beachvolleyball": true,
+      "sandstrand": true,
+      "fkk": null
+    },
+    "tags": ["Alte Donau", "Naturbad", "Liegewiese"],
+    "featured": false
+  },
+  {
+    "id": "stadionbad",
+    "name": "Stadionbad",
+    "type": "freibad",
+    "district": 2,
+    "address": "Meiereistraße 7, 1020 Wien",
+    "coordinates": [48.2097, 16.4224],
+    "since": 1931,
+    "officialUrl": "https://www.wien.gv.at/freizeit/stadionbad",
+    "season": { "open": "05-02", "close": "09-13" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "07:00–20:00",
+      "note": null
+    },
+    "amenities": {
+      "rutsche": true,
+      "kinderbecken": true,
+      "sprungturm": true,
+      "wasser_schwammerl": null,
+      "sauna": false,
+      "fritten": true,
+      "strudel": null,
+      "beachvolleyball": true,
+      "sandstrand": false,
+      "fkk": false
+    },
+    "tags": ["Prater", "Wellenbad", "Sprungturm", "Riesig"],
+    "featured": true
+  },
+  {
+    "id": "laaerbergbad",
+    "name": "Laaerbergbad",
+    "type": "freibad",
+    "district": 10,
+    "address": "Ludwig-von-Höhnel-Gasse 2, 1100 Wien",
+    "coordinates": [48.1550, 16.3800],
+    "since": 1959,
+    "officialUrl": "https://www.wien.gv.at/freizeit/laaerbergbad",
+    "season": { "open": "05-02", "close": "09-13" },
+    "hours": {
+      "weekday": "09:00–20:00",
+      "weekend": "07:00–20:00",
+      "note": null
+    },
+    "amenities": {
+      "rutsche": true,
+      "kinderbecken": true,
+      "sprungturm": true,
+      "wasser_schwammerl": null,
+      "sauna": false,
+      "fritten": true,
+      "strudel": null,
+      "beachvolleyball": true,
+      "sandstrand": false,
+      "fkk": false
+    },
+    "tags": ["Favoriten", "Kunst", "Nachkrieg", "Familienfreundlich"],
+    "featured": false
+  },
+  {
+    "id": "schafbergbad",
+    "name": "Schafbergbad",
+    "type": "freibad",
+    "district": 18,
+    "address": "Josef-Redl-Gasse 2, 1180 Wien",
+    "coordinates": [48.2470, 16.3200],
+    "since": null,
+    "officialUrl": "https://www.wien.gv.at/freizeit/schafbergbad",
+    "season": { "open": "05-02", "close": "09-13" },
+    "hours": {
+      "weekday": "09:00–19:30",
+      "weekend": "08:00–19:30",
+      "note": null
+    },
+    "amenities": {
+      "rutsche": true,
+      "kinderbecken": true,
+      "sprungturm": true,
+      "wasser_schwammerl": null,
+      "sauna": null,
+      "fritten": true,
+      "strudel": null,
+      "beachvolleyball": true,
+      "sandstrand": false,
+      "fkk": false
+    },
+    "tags": ["Rutsche", "Familie", "Währing", "Panorama"],
     "featured": true
   }
 ]
