@@ -49,7 +49,7 @@ async function fetchImageInfo(title) {
     format: 'json',
     titles: title,
     prop: 'imageinfo',
-    iiprop: 'url|extmetadata|size',
+    iiprop: 'url|extmetadata|mime|size',
     iiurlwidth: '1400',
     origin: '*',
   })
@@ -61,7 +61,6 @@ async function fetchImageInfo(title) {
 
 function isUsableImage(info) {
   if (!info) return false
-  // Only allow free licenses
   const license = info.extmetadata?.LicenseShortName?.value ?? ''
   const free = ['CC0', 'CC BY', 'CC BY-SA', 'Public domain', 'FAL']
   return free.some((l) => license.startsWith(l))
@@ -95,15 +94,35 @@ async function curatePool(poolId) {
   const members = await fetchCategoryMembers(category)
   console.log(`  Found ${members.length} files`)
 
-  let saved = 0
+  // Collect usable candidates with image dimensions for sorting
+  const candidates = []
   for (const member of members) {
-    if (saved >= 5) break
-
+    if (candidates.length >= 8) break
+    const lc = member.title.toLowerCase()
+    if (!lc.endsWith('.jpg') && !lc.endsWith('.jpeg') && !lc.endsWith('.png')) continue
     const info = await fetchImageInfo(member.title)
     if (!isUsableImage(info)) {
       console.log(`  ✗ Skipped (license): ${member.title}`)
       continue
     }
+    candidates.push({ member, info })
+  }
+
+  if (candidates.length === 0) {
+    console.log(`  ⚠  No usable images found for ${poolId}`)
+    return
+  }
+
+  // Sort by pixel area descending — largest image becomes the hero
+  candidates.sort((a, b) => {
+    const aArea = (a.info.width ?? 0) * (a.info.height ?? 0)
+    const bArea = (b.info.width ?? 0) * (b.info.height ?? 0)
+    return bArea - aArea
+  })
+
+  let saved = 0
+  for (const { member, info } of candidates) {
+    if (saved >= 5) break
 
     const srcUrl = info.thumburl || info.url
     const ext = path.extname(new URL(srcUrl).pathname).toLowerCase()
@@ -133,7 +152,7 @@ async function curatePool(poolId) {
   await writeFile(metaPath, JSON.stringify(metadata, null, 2))
 
   if (saved === 0) {
-    console.log(`  ⚠  No usable images found for ${poolId}`)
+    console.log(`  ⚠  No images saved for ${poolId}`)
   } else {
     console.log(`  → ${saved} image(s) saved`)
   }

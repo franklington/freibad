@@ -24,10 +24,20 @@ const rest = (pools as Pool[]).filter((p) => !p.featured)
         </p>
         <div class="hero-actions">
           <a href="/pools" class="btn-primary">Alle Bäder entdecken</a>
-          <a href="/map" class="btn-ghost">Karte öffnen →</a>
+          <button id="lazy-btn" class="btn-lazy" type="button">🎲 Überrasch mich</button>
+          <a href="/map" class="btn-ghost">Karte →</a>
         </div>
       </div>
     </div>
+
+    <!-- Lazy mode reveal (hidden by default) -->
+    <section id="lazy-section" class="lazy-section" aria-live="polite">
+      <div class="content-width lazy-inner">
+        <p class="lazy-heading">Heute schwimmst du in&nbsp;…</p>
+        <div id="lazy-result" class="lazy-result"></div>
+        <button id="lazy-again" class="lazy-again" type="button">🔄 Nochmal!</button>
+      </div>
+    </section>
   </section>
 
   <!-- Manifesto strip -->
@@ -61,7 +71,7 @@ const rest = (pools as Pool[]).filter((p) => !p.featured)
     </div>
   </section>
 
-  <!-- Rest of pools - minimal list -->
+  <!-- Rest of pools — minimal list -->
   <section class="pool-list content-width">
     <header class="section-header">
       <h2 class="section-title">Auch<br /><em>gut</em></h2>
@@ -80,6 +90,15 @@ const rest = (pools as Pool[]).filter((p) => !p.featured)
       }
     </ul>
   </section>
+
+  <!-- Hidden pool data for JS lazy picker — pre-rendered at build time -->
+  <div id="pool-storage" hidden aria-hidden="true">
+    {(pools as Pool[]).map((pool) => (
+      <div data-pool-id={pool.id}>
+        <PoolCard pool={pool} />
+      </div>
+    ))}
+  </div>
 </Base>
 
 <style>
@@ -88,7 +107,8 @@ const rest = (pools as Pool[]).filter((p) => !p.featured)
     background: var(--color-nacht);
     min-height: 95svh;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
     padding-bottom: var(--space-24);
     padding-top: 6rem;
     position: relative;
@@ -159,6 +179,86 @@ const rest = (pools as Pool[]).filter((p) => !p.featured)
     align-items: center;
     gap: var(--space-6);
     flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .btn-lazy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: transparent;
+    color: var(--color-gelb);
+    border: 1px solid color-mix(in srgb, var(--color-gelb) 50%, transparent);
+    padding: var(--space-3) var(--space-8);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .btn-lazy:hover {
+    border-color: var(--color-gelb);
+    background: color-mix(in srgb, var(--color-gelb) 10%, transparent);
+  }
+
+  /* Lazy reveal */
+  .lazy-section {
+    display: none;
+    padding-block: var(--space-12);
+    border-top: 1px solid color-mix(in srgb, var(--color-cream) 15%, transparent);
+  }
+
+  .lazy-section.visible {
+    display: block;
+    animation: fade-slide 0.4s ease-out both;
+  }
+
+  @keyframes fade-slide {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .lazy-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-8);
+  }
+
+  .lazy-heading {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-style: italic;
+    letter-spacing: -0.02em;
+    color: var(--color-cream);
+    text-align: center;
+  }
+
+  .lazy-result {
+    width: 100%;
+    max-width: 24rem;
+  }
+
+  .lazy-again {
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--color-cream) 40%, transparent);
+    color: color-mix(in srgb, var(--color-cream) 80%, transparent);
+    padding: var(--space-2) var(--space-6);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .lazy-again:hover {
+    border-color: var(--color-cream);
+    color: var(--color-cream);
   }
 
   /* Manifesto strip */
@@ -319,5 +419,32 @@ const rest = (pools as Pool[]).filter((p) => !p.featured)
     .manifesto-item { padding-inline: var(--space-6); }
     .manifesto-num { font-size: clamp(2.5rem, 10vw, 4rem); }
     .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-actions { gap: var(--space-4); }
   }
 </style>
+
+<script>
+  const lazyBtn = document.getElementById('lazy-btn') as HTMLButtonElement
+  const lazySection = document.getElementById('lazy-section') as HTMLElement
+  const lazyResult = document.getElementById('lazy-result') as HTMLElement
+  const lazyAgain = document.getElementById('lazy-again') as HTMLButtonElement
+  const poolItems = Array.from(
+    document.querySelectorAll<HTMLElement>('#pool-storage [data-pool-id]'),
+  )
+
+  function pickRandom() {
+    const idx = Math.floor(Math.random() * poolItems.length)
+    lazyResult.innerHTML = poolItems[idx].innerHTML
+    if (!lazySection.classList.contains('visible')) {
+      lazySection.classList.add('visible')
+    }
+    lazySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
+
+  lazyBtn.addEventListener('click', () => {
+    pickRandom()
+    lazyBtn.textContent = '🎲 Nochmal?'
+  })
+
+  lazyAgain.addEventListener('click', pickRandom)
+</script>

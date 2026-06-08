@@ -28,6 +28,7 @@ const {
       rel="stylesheet"
     />
     <title>{title} — Freibad Wien</title>
+    <slot name="head" />
   </head>
   <body class:list={[{ 'body--dark': dark }]}>
     <header class:list={['site-header', { 'site-header--dark': dark }]}>
