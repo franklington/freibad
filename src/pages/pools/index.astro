@@ -1,50 +1,246 @@
 ---
 import Base from '../../layouts/Base.astro'
-import PoolCard from '../../components/PoolCard.astro'
 import pools from '../../data/pools.json'
 import type { Pool } from '../../types/pool'
+import { AMENITY_ICONS, AMENITY_LABELS } from '../../types/pool'
 
-const allPools = pools as Pool[]
-const sorted = [...allPools].sort((a, b) => a.name.localeCompare(b.name, 'de'))
+const allPools = (pools as Pool[]).sort((a, b) => a.district - b.district)
+
+const POOL_GRADIENTS: Record<string, string> = {
+  gaensehaeufel:   'linear-gradient(160deg, #004E89 0%, #1A936F 100%)',
+  krapfenwaldlbad: 'linear-gradient(160deg, #2D6A4F 0%, #74C69D 100%)',
+  kongressbad:     'linear-gradient(160deg, #6B2D2D 0%, #C44B2B 100%)',
+  schoenbrunnerbad:'linear-gradient(160deg, #8B6914 0%, #F0D077 100%)',
+  angelibad:       'linear-gradient(160deg, #0077B6 0%, #48CAE4 100%)',
+  altedonau:       'linear-gradient(160deg, #023E8A 0%, #0096C7 100%)',
+  stadionbad:      'linear-gradient(160deg, #1B3A6B 0%, #4361EE 100%)',
+  laaerbergbad:    'linear-gradient(160deg, #7B3F00 0%, #E8A87C 100%)',
+  schafbergbad:    'linear-gradient(160deg, #2B2D42 0%, #8D99AE 100%)',
+}
 ---
 
 <Base title="Alle Freibäder" description="Alle Freibäder in Wien auf einen Blick.">
-  <div class="content-width page">
+  <div class="page">
     <header class="page-header">
-      <h1 class="page-title">Alle Freibäder</h1>
-      <p class="page-sub">{allPools.length} Bäder in Wien und Umgebung</p>
+      <div class="content-width">
+        <h1 class="page-title">
+          Alle<br /><em>Freibäder</em>
+        </h1>
+        <p class="page-sub">{allPools.length} Bäder · Saison Mai bis September</p>
+      </div>
     </header>
-    <div class="pool-grid">
-      {sorted.map((pool) => <PoolCard pool={pool} />)}
+
+    <div class="content-width pools-grid">
+      {
+        allPools.map((pool) => {
+          const gradient = POOL_GRADIENTS[pool.id] ?? 'linear-gradient(160deg, #1C1917, #7C6E5E)'
+          const amenities = (Object.keys(pool.amenities) as (keyof typeof pool.amenities)[])
+            .filter((k) => pool.amenities[k] === true)
+          return (
+            <article class="pool-row">
+              <a href={`/pools/${pool.id}`} class="row-image" style={`background: ${gradient}`}>
+                <img
+                  src={`/images/pools/${pool.id}/hero.jpg`}
+                  alt={pool.name}
+                  loading="lazy"
+                  onerror="this.style.opacity='0'"
+                />
+              </a>
+              <div class="row-body">
+                <div class="row-meta">
+                  <span class="row-district">{pool.district}. Bezirk</span>
+                  {pool.since && <span class="row-since">seit {pool.since}</span>}
+                </div>
+                <h2 class="row-name">
+                  <a href={`/pools/${pool.id}`}>{pool.name}</a>
+                </h2>
+                {amenities.length > 0 && (
+                  <ul class="amenities" aria-label="Ausstattung">
+                    {amenities.map((key) => (
+                      <li class="amenity-item">
+                        {AMENITY_ICONS[key]} {AMENITY_LABELS[key]}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <p class="row-hours">
+                  {pool.hours.weekday === pool.hours.weekend
+                    ? `Täglich ${pool.hours.weekday}`
+                    : `Mo–Fr ${pool.hours.weekday} · Sa–So ${pool.hours.weekend}`}
+                </p>
+              </div>
+              <a href={`/pools/${pool.id}`} class="row-cta" aria-label={`${pool.name} entdecken`}>
+                →
+              </a>
+            </article>
+          )
+        })
+      }
     </div>
   </div>
 </Base>
 
 <style>
   .page {
-    padding-block: var(--space-16);
+    padding-top: 6rem;
   }
 
   .page-header {
-    margin-bottom: var(--space-12);
+    background: var(--color-nacht);
+    padding-block: var(--space-24) var(--space-16);
+    margin-bottom: var(--space-16);
   }
 
   .page-title {
     font-family: var(--font-display);
-    font-size: var(--text-4xl);
-    color: var(--color-deep);
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 300;
+    line-height: 0.95;
     letter-spacing: -0.02em;
-    margin-bottom: var(--space-2);
+    color: var(--color-cream);
+    margin-bottom: var(--space-6);
+  }
+
+  .page-title em {
+    font-style: italic;
+    color: var(--color-gelb);
   }
 
   .page-sub {
-    font-size: var(--text-lg);
+    font-size: var(--text-sm);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-cream) 40%, transparent);
+  }
+
+  /* Pool rows */
+  .pools-grid {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-border);
+    padding-bottom: var(--space-16);
+  }
+
+  .pool-row {
+    display: grid;
+    grid-template-columns: 8rem 1fr auto;
+    gap: var(--space-6);
+    align-items: center;
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    transition: background 0.15s;
+  }
+
+  .pool-row:hover {
+    background: color-mix(in srgb, var(--color-gelb) 5%, transparent);
+  }
+
+  .row-image {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .row-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease, opacity 0.3s;
+  }
+
+  .pool-row:hover .row-image img {
+    transform: scale(1.05);
+  }
+
+  .row-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .row-meta {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .row-district {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
     color: var(--color-text-muted);
   }
 
-  .pool-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-    gap: var(--space-6);
+  .row-since {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .row-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .row-name a {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .row-name a:hover {
+    color: var(--color-rot);
+    text-decoration: none;
+  }
+
+  .amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    list-style: none;
+  }
+
+  .amenity-item {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .row-hours {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .row-cta {
+    font-size: var(--text-xl);
+    color: var(--color-border);
+    text-decoration: none;
+    padding: var(--space-4);
+    transition: color 0.2s, transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .pool-row:hover .row-cta {
+    color: var(--color-rot);
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 640px) {
+    .pool-row {
+      grid-template-columns: 6rem 1fr auto;
+      gap: var(--space-4);
+    }
+
+    .row-cta { padding: var(--space-2); }
   }
 </style>
