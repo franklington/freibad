@@ -4,10 +4,14 @@ import '../styles/global.css'
 interface Props {
   title: string
   description?: string
+  dark?: boolean
 }
 
-const { title, description = 'Entdecke die schönsten Freibäder in Wien und Umgebung.' } =
-  Astro.props
+const {
+  title,
+  description = 'Entdecke die schönsten Freibäder in Wien und Umgebung.',
+  dark = false,
+} = Astro.props
 ---
 
 <!doctype html>
@@ -20,19 +24,21 @@ const { title, description = 'Entdecke die schönsten Freibäder in Wien und Umg
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Source+Sans+3:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400;1,700&family=Source+Sans+3:wght@400;600&display=swap"
       rel="stylesheet"
     />
     <title>{title} — Freibad Wien</title>
   </head>
-  <body>
-    <header class="site-header">
+  <body class:list={[{ 'body--dark': dark }]}>
+    <header class:list={['site-header', { 'site-header--dark': dark }]}>
       <div class="content-width header-inner">
-        <a href="/" class="site-logo">Freibad Wien</a>
-        <nav>
-          <a href="/">Start</a>
-          <a href="/map">Karte</a>
+        <a href="/" class="site-logo">
+          <span class="logo-main">Freibad</span>
+          <span class="logo-sub">Wien</span>
+        </a>
+        <nav aria-label="Hauptnavigation">
           <a href="/pools">Alle Bäder</a>
+          <a href="/map">Karte</a>
         </nav>
       </div>
     </header>
@@ -43,15 +49,24 @@ const { title, description = 'Entdecke die schönsten Freibäder in Wien und Umg
 
     <footer class="site-footer">
       <div class="content-width footer-inner">
-        <p>
-          Mit ❤ für Wiens Freibäder. Keine Werbung, keine Ahnung von Privatschwimmbädern.
-        </p>
-        <p class="footer-credits">
-          Daten: <a href="https://data.gv.at" target="_blank" rel="noopener">data.gv.at</a> (CC BY
-          4.0) &amp; <a href="https://www.openstreetmap.org" target="_blank" rel="noopener"
-            >OpenStreetMap</a
-          > (ODbL). Bilder: Wikimedia Commons, Wien Museum.
-        </p>
+        <div class="footer-top">
+          <p class="footer-claim">
+            Kein eigenes Schwimmbad nötig.<br />
+            <em>Wien hat dreißig.</em>
+          </p>
+          <nav class="footer-nav" aria-label="Footer Navigation">
+            <a href="/pools">Alle Bäder</a>
+            <a href="/map">Karte</a>
+          </nav>
+        </div>
+        <div class="footer-bottom">
+          <p>
+            Daten: <a href="https://data.gv.at" target="_blank" rel="noopener">data.gv.at</a>
+            (CC BY 4.0) &amp;
+            <a href="https://www.openstreetmap.org" target="_blank" rel="noopener">OpenStreetMap</a>
+            (ODbL). Bilder: Wikimedia Commons, Wien Museum.
+          </p>
+        </div>
       </div>
     </footer>
   </body>
@@ -59,68 +74,156 @@ const { title, description = 'Entdecke die schönsten Freibäder in Wien und Umg
 
 <style>
   .site-header {
-    background: var(--color-deep);
-    color: var(--color-white);
-    padding-block: var(--space-4);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-cream);
+    transition: background 0.3s;
+  }
+
+  .site-header--dark {
+    background: var(--color-nacht);
+    border-bottom-color: color-mix(in srgb, var(--color-cream) 10%, transparent);
   }
 
   .header-inner {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
   }
 
   .site-logo {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    color: var(--color-white);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
     text-decoration: none;
-    letter-spacing: -0.02em;
+  }
+
+  .logo-main {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-gelb);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .site-header--dark .logo-sub {
+    color: color-mix(in srgb, var(--color-cream) 50%, transparent);
   }
 
   nav {
     display: flex;
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
 
   nav a {
-    color: color-mix(in srgb, var(--color-white) 80%, transparent);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     font-weight: 600;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
     text-decoration: none;
     transition: color 0.2s;
   }
 
   nav a:hover {
-    color: var(--color-white);
+    color: var(--color-text);
     text-decoration: none;
   }
 
+  .site-header--dark nav a {
+    color: color-mix(in srgb, var(--color-cream) 50%, transparent);
+  }
+
+  .site-header--dark nav a:hover {
+    color: var(--color-cream);
+  }
+
+  /* Footer */
   .site-footer {
-    background: var(--color-deep);
-    color: color-mix(in srgb, var(--color-white) 70%, transparent);
-    padding-block: var(--space-12);
-    margin-top: var(--space-24);
+    background: var(--color-nacht);
+    color: var(--color-cream);
+    padding-block: var(--space-16);
+    margin-top: var(--space-32);
   }
 
   .footer-inner {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
+    gap: var(--space-12);
   }
 
-  .footer-credits {
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-8);
+  }
+
+  .footer-claim {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 300;
+    line-height: 1.3;
+    color: color-mix(in srgb, var(--color-cream) 80%, transparent);
+  }
+
+  .footer-claim em {
+    font-style: italic;
+    color: var(--color-gelb);
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: flex-end;
+  }
+
+  .footer-nav a {
     font-size: var(--text-xs);
-    opacity: 0.7;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-cream) 50%, transparent);
+    text-decoration: none;
+    transition: color 0.2s;
   }
 
-  .site-footer a {
-    color: var(--color-water);
+  .footer-nav a:hover {
+    color: var(--color-gelb);
+    text-decoration: none;
+  }
+
+  .footer-bottom {
+    font-size: var(--text-xs);
+    color: color-mix(in srgb, var(--color-cream) 30%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--color-cream) 10%, transparent);
+    padding-top: var(--space-6);
+  }
+
+  .footer-bottom a {
+    color: color-mix(in srgb, var(--color-cream) 50%, transparent);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .footer-top { flex-direction: column; }
+    .footer-nav { align-items: flex-start; }
   }
 </style>
