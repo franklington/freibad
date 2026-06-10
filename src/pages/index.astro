@@ -3,11 +3,36 @@ import Base from '../layouts/Base.astro'
 import PoolCard from '../components/PoolCard.astro'
 import pools from '../data/pools.json'
 import type { Pool } from '../types/pool'
+import { AMENITY_ICONS, AMENITY_LABELS } from '../types/pool'
 
-const featured = (pools as Pool[]).filter((p) => p.featured)
-const rest = (pools as Pool[]).filter((p) => !p.featured)
+const allPools = pools as Pool[]
+const featured = allPools.filter((p) => p.featured)
 
-const mapPools = (pools as Pool[]).map((p) => ({
+const POOL_GRADIENTS: Record<string, string> = {
+  gaensehaeufel:    'linear-gradient(135deg, #004E89 0%, #1A936F 100%)',
+  krapfenwaldlbad:  'linear-gradient(135deg, #2D6A4F 0%, #74C69D 100%)',
+  kongressbad:      'linear-gradient(135deg, #C41E2A 0%, #7A1520 100%)',
+  schoenbrunnerbad: 'linear-gradient(135deg, #8B6914 0%, #F0D077 100%)',
+  angelibad:        'linear-gradient(135deg, #0077B6 0%, #48CAE4 100%)',
+  altedonau:        'linear-gradient(135deg, #023E8A 0%, #0096C7 100%)',
+  stadionbad:       'linear-gradient(135deg, #1B3A6B 0%, #4361EE 100%)',
+  laaerbergbad:     'linear-gradient(135deg, #7B3F00 0%, #E8A87C 100%)',
+  schafbergbad:     'linear-gradient(135deg, #2B2D42 0%, #8D99AE 100%)',
+}
+
+const POOL_COLORS: Record<string, string> = {
+  gaensehaeufel:    '#004E89',
+  krapfenwaldlbad:  '#2D6A4F',
+  kongressbad:      '#C41E2A',
+  schoenbrunnerbad: '#C4960A',
+  angelibad:        '#0077B6',
+  altedonau:        '#023E8A',
+  stadionbad:       '#1B3A6B',
+  laaerbergbad:     '#7B3F00',
+  schafbergbad:     '#2B2D42',
+}
+
+const mapPools = allPools.map((p) => ({
   id: p.id,
   name: p.name,
   coordinates: p.coordinates,
@@ -16,7 +41,7 @@ const mapPools = (pools as Pool[]).map((p) => ({
 }))
 ---
 
-<Base title="Dein Sommer wartet">
+<Base title="Freibad Wien">
   <link
     slot="head"
     rel="stylesheet"
@@ -25,45 +50,117 @@ const mapPools = (pools as Pool[]).map((p) => ({
     crossorigin=""
   />
 
-  <!-- Editorial intro -->
-  <section class="page-intro">
-    <div class="content-width intro-inner">
-      <p class="intro-label">Wien · 30 Freibäder · Saison Mai–September</p>
-      <h1 class="intro-title">
-        <em>Freibad</em>
-        <span>Wien</span>
-      </h1>
-      <div class="intro-foot">
-        <p class="intro-sub">
-          Kein eigenes Schwimmbad nötig.<br />
-          Wien hat dreißig.
-        </p>
-        <div class="intro-actions">
-          <a href="/pools" class="btn-primary">Alle Bäder</a>
-          <button id="lazy-btn" class="btn-outline" type="button">🎲 Überrasch mich</button>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Full-viewport map + panel -->
+  <div class="map-viewport">
 
-  <!-- Map: main navigation -->
-  <div class="map-section">
-    <p class="map-label">– Klick auf ein Bad und schwimm los –</p>
     <div
       id="map"
       data-pools={JSON.stringify(mapPools)}
       aria-label="Karte der Wiener Freibäder"
     ></div>
+
+    <!-- Sidebar navigation panel -->
+    <aside class="pool-panel" id="pool-panel" aria-label="Freibäder auswählen">
+
+      <!-- LIST VIEW (default) -->
+      <div id="view-list" class="panel-view">
+        <div class="panel-top">
+          <h1 class="panel-title">
+            <em>Freibad</em>
+            <span>Wien</span>
+          </h1>
+          <p class="panel-hint">Wähle ein Bad auf der Karte oder der Liste</p>
+        </div>
+
+        <ul class="pool-list" id="pool-list">
+          {allPools.map((pool) => (
+            <li
+              class="pool-item"
+              data-pool-id={pool.id}
+              role="button"
+              tabindex="0"
+              aria-label={`${pool.name} auswählen`}
+            >
+              <span class="item-swatch" style={`background: ${POOL_COLORS[pool.id] ?? '#1C1917'}`}></span>
+              <span class="item-body">
+                <span class="item-name">{pool.name}</span>
+                <span class="item-sub">{pool.district}. Bezirk{pool.since ? ` · ${pool.since}` : ''}</span>
+              </span>
+              <span class="item-arrow" aria-hidden="true">→</span>
+            </li>
+          ))}
+        </ul>
+
+        <div class="panel-actions">
+          <button id="lazy-btn" class="btn-outline" type="button">🎲 Überrasch mich</button>
+          <a href="/pools" class="btn-text">Alle Bäder →</a>
+        </div>
+      </div>
+
+      <!-- DETAIL VIEW (shown when a pool is selected) -->
+      <div id="view-detail" class="panel-view" hidden>
+        <button class="detail-back" id="detail-back" type="button">
+          ← Zurück
+        </button>
+
+        <!-- One card per pool, shown/hidden by JS -->
+        {allPools.map((pool) => {
+          const gradient = POOL_GRADIENTS[pool.id] ?? 'linear-gradient(135deg, #1C1917, #7C6E5E)'
+          const confirmed = (Object.keys(pool.amenities) as (keyof typeof pool.amenities)[])
+            .filter((k) => pool.amenities[k] === true)
+          const hours =
+            pool.hours.weekday === pool.hours.weekend
+              ? `Täglich ${pool.hours.weekday}`
+              : `Mo–Fr ${pool.hours.weekday} · Sa–So ${pool.hours.weekend}`
+          return (
+            <article class="pool-card" id={`card-${pool.id}`} hidden>
+              <div class="card-visual" style={`background: ${gradient}`}>
+                <img
+                  src={`/images/pools/${pool.id}/hero.jpg`}
+                  alt={pool.name}
+                  class="card-img"
+                  loading="lazy"
+                  onerror="this.style.opacity='0'"
+                />
+              </div>
+              <div class="card-body">
+                <h2 class="card-name">{pool.name}</h2>
+                <p class="card-district">
+                  {pool.district}. Bezirk{pool.since ? ` · seit ${pool.since}` : ''}
+                </p>
+                {confirmed.length > 0 && (
+                  <ul class="card-amenities" aria-label="Ausstattung">
+                    {confirmed.map((key) => (
+                      <li class="card-amenity">
+                        {AMENITY_ICONS[key]} {AMENITY_LABELS[key]}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <p class="card-hours">{hours}</p>
+                <a href={`/pools/${pool.id}`} class="btn-primary card-cta">
+                  Entdecken →
+                </a>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+    </aside>
+
     <noscript>
-      <ul class="noscript-list content-width">
-        {(pools as Pool[]).map((p) => (
-          <li><a href={`/pools/${p.id}`}>{p.name}</a> — {p.district}. Bezirk</li>
-        ))}
-      </ul>
+      <div class="noscript-panel">
+        <ul>
+          {allPools.map((p) => (
+            <li><a href={`/pools/${p.id}`}>{p.name}</a> — {p.district}. Bezirk</li>
+          ))}
+        </ul>
+      </div>
     </noscript>
   </div>
 
-  <!-- Manifesto strip -->
+  <!-- Editorial content below the fold -->
   <section class="manifesto">
     <div class="content-width manifesto-inner">
       <div class="manifesto-item">
@@ -83,52 +180,13 @@ const mapPools = (pools as Pool[]).map((p) => ({
     </div>
   </section>
 
-  <!-- Featured pools -->
   <section class="featured content-width">
     <header class="section-header">
       <h2 class="section-title">Die Lieblinge<br /><em>der Stadt</em></h2>
-      <a href="/pools" class="section-link">Alle {(pools as Pool[]).length} Bäder →</a>
+      <a href="/pools" class="section-link">Alle {allPools.length} Bäder →</a>
     </header>
     <div class="featured-grid">
-      {featured.map((pool, i) => <PoolCard pool={pool as Pool} large={i === 0} />)}
-    </div>
-  </section>
-
-  <!-- Rest — minimal list -->
-  <section class="pool-list content-width">
-    <header class="section-header">
-      <h2 class="section-title">Auch<br /><em>gut</em></h2>
-    </header>
-    <ul class="list-items">
-      {
-        rest.map((pool) => (
-          <li class="list-item">
-            <a href={`/pools/${pool.id}`} class="list-link">
-              <span class="list-district">{pool.district}.</span>
-              <span class="list-name">{pool.name}</span>
-              <span class="list-arrow">→</span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
-
-  <!-- Hidden pool data for lazy mode -->
-  <div id="pool-storage" hidden aria-hidden="true">
-    {(pools as Pool[]).map((pool) => (
-      <div data-pool-id={pool.id}>
-        <PoolCard pool={pool} />
-      </div>
-    ))}
-  </div>
-
-  <!-- Lazy reveal -->
-  <section id="lazy-section" class="lazy-section" aria-live="polite">
-    <div class="content-width lazy-inner">
-      <p class="lazy-heading">Heute schwimmst du in&nbsp;…</p>
-      <div id="lazy-result" class="lazy-result"></div>
-      <button id="lazy-again" class="lazy-again" type="button">🔄 Nochmal!</button>
+      {featured.map((pool, i) => <PoolCard pool={pool} large={i === 0} />)}
     </div>
   </section>
 </Base>
@@ -136,29 +194,28 @@ const mapPools = (pools as Pool[]).map((p) => ({
 <style is:global>
   /* Map pins */
   .pool-pin {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     background: var(--color-rot);
     border: 2px solid white;
     border-radius: 50%;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
   }
 
   .pool-pin:hover {
-    transform: scale(1.6);
-    box-shadow: 0 3px 10px rgb(0 0 0 / 0.3);
+    transform: scale(1.7);
   }
 
-  .pool-pin--featured {
-    width: 18px;
-    height: 18px;
+  .pool-pin.active {
     background: var(--color-nacht);
-    border: 2.5px solid var(--color-gelb);
+    border-color: var(--color-gelb);
+    transform: scale(1.5);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-gelb) 30%, transparent);
   }
 
-  /* Pool name tooltip */
+  /* Name tooltip */
   .pool-tooltip.leaflet-tooltip {
     background: var(--color-nacht) !important;
     border: none !important;
@@ -166,94 +223,171 @@ const mapPools = (pools as Pool[]).map((p) => ({
     color: var(--color-cream) !important;
     font-family: var(--font-display) !important;
     font-style: italic !important;
-    font-size: 1rem !important;
-    padding: 4px 10px !important;
+    font-size: 0.95rem !important;
+    padding: 3px 10px !important;
     box-shadow: none !important;
     white-space: nowrap !important;
+    pointer-events: none !important;
   }
 
   .pool-tooltip.leaflet-tooltip::before {
     border-top-color: var(--color-nacht) !important;
   }
-
-  /* Remove Leaflet default outline on focus */
-  .leaflet-container a:focus {
-    outline: 2px solid var(--color-rot);
-  }
 </style>
 
 <style>
-  /* Editorial intro */
-  .page-intro {
-    padding-top: 5.5rem; /* clear fixed header */
+  /* ── Map viewport ── */
+  .map-viewport {
+    height: calc(100dvh - 3.5rem);
+    margin-top: 3.5rem; /* below fixed header */
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    overflow: hidden;
+  }
+
+  #map {
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* ── Navigation panel ── */
+  .pool-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
     background: var(--color-cream);
+    border-left: 1px solid var(--color-border);
+  }
+
+  .panel-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* List view */
+  .panel-top {
+    padding: var(--space-6);
     border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
   }
 
-  .intro-inner {
-    padding-block: var(--space-16) var(--space-12);
-  }
-
-  .intro-label {
-    font-size: var(--text-xs);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-6);
-    display: block;
-  }
-
-  .intro-title {
+  .panel-title {
     line-height: 1;
-    margin-bottom: var(--space-10);
+    margin-bottom: var(--space-3);
   }
 
-  .intro-title em {
+  .panel-title em {
     display: block;
     font-family: var(--font-display);
-    font-size: clamp(4.5rem, 16vw, 14rem);
+    font-size: 2.25rem;
     font-style: italic;
     font-weight: 700;
     color: var(--color-nacht);
-    letter-spacing: -0.03em;
-    line-height: 0.85;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
   }
 
-  .intro-title span {
+  .panel-title span {
     display: block;
     font-family: var(--font-body);
-    font-size: clamp(0.9rem, 2.5vw, 2rem);
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 0.45em;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
     color: var(--color-rot);
-    margin-top: var(--space-4);
+    margin-top: var(--space-2);
   }
 
-  .intro-foot {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--space-8);
-    flex-wrap: wrap;
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-8);
-  }
-
-  .intro-sub {
-    font-family: var(--font-display);
-    font-size: clamp(1rem, 2vw, 1.375rem);
-    font-weight: 300;
+  .panel-hint {
+    font-size: var(--text-xs);
+    letter-spacing: 0.05em;
     color: var(--color-text-muted);
     line-height: 1.5;
   }
 
-  .intro-actions {
+  .pool-list {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .pool-item {
+    display: grid;
+    grid-template-columns: 8px 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: background 0.12s;
+    user-select: none;
+  }
+
+  .pool-item:hover,
+  .pool-item.active {
+    background: color-mix(in srgb, var(--color-gelb) 12%, transparent);
+  }
+
+  .pool-item:focus-visible {
+    outline: 2px solid var(--color-rot);
+    outline-offset: -2px;
+  }
+
+  .item-swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .item-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-base);
+    color: var(--color-text);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-sub {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .item-arrow {
+    font-size: var(--text-sm);
+    color: var(--color-border);
+    transition: transform 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .pool-item:hover .item-arrow,
+  .pool-item.active .item-arrow {
+    transform: translateX(3px);
+    color: var(--color-rot);
+  }
+
+  .panel-actions {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     gap: var(--space-4);
     flex-shrink: 0;
-    flex-wrap: wrap;
   }
 
   .btn-outline {
@@ -262,53 +396,165 @@ const mapPools = (pools as Pool[]).map((p) => ({
     gap: var(--space-2);
     background: transparent;
     color: var(--color-nacht);
-    border: 1px solid var(--color-nacht);
-    padding: var(--space-3) var(--space-8);
+    border: 1px solid var(--color-border);
+    padding: var(--space-2) var(--space-4);
     font-family: var(--font-body);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    transition: border-color 0.15s, background 0.15s;
   }
 
   .btn-outline:hover {
-    background: var(--color-nacht);
-    color: var(--color-cream);
+    border-color: var(--color-nacht);
+    background: color-mix(in srgb, var(--color-nacht) 5%, transparent);
   }
 
-  /* Map section */
-  .map-section {
-    width: 100%;
-    background: var(--color-cream);
-  }
-
-  .map-label {
-    text-align: center;
+  .btn-text {
     font-size: var(--text-xs);
-    letter-spacing: 0.2em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-text-muted);
-    padding: var(--space-4) 0;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .btn-text:hover {
+    color: var(--color-rot);
+    text-decoration: none;
+  }
+
+  /* Detail view */
+  .detail-back {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background: none;
+    border: none;
     border-bottom: 1px solid var(--color-border);
-  }
-
-  #map {
+    cursor: pointer;
     width: 100%;
-    height: 68vh;
-    min-height: 400px;
+    text-align: left;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
   }
 
-  .noscript-list {
-    padding-block: var(--space-8);
-    list-style: none;
+  .detail-back:hover {
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-gelb) 8%, transparent);
+  }
+
+  .pool-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    animation: slide-in 0.25s ease-out both;
+  }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .card-visual {
+    position: relative;
+    height: 140px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s;
+  }
+
+  .card-body {
+    padding: var(--space-6);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+    flex: 1;
   }
 
-  /* Manifesto strip */
+  .card-name {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-text);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .card-district {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .card-amenities {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
+  }
+
+  .card-amenity {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .card-amenity::before {
+    content: '—';
+    color: var(--color-gelb);
+    font-weight: 700;
+  }
+
+  .card-hours {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.03em;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
+  }
+
+  .card-cta {
+    margin-top: auto;
+  }
+
+  /* noscript */
+  .noscript-panel {
+    position: absolute;
+    inset: 0;
+    background: var(--color-cream);
+    padding: var(--space-8);
+    overflow-y: auto;
+  }
+
+  /* ── Manifesto ── */
   .manifesto {
     background: var(--color-gelb);
     padding-block: var(--space-16);
@@ -318,7 +564,6 @@ const mapPools = (pools as Pool[]).map((p) => ({
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0;
   }
 
   .manifesto-item {
@@ -355,9 +600,9 @@ const mapPools = (pools as Pool[]).map((p) => ({
     flex-shrink: 0;
   }
 
-  /* Featured pools */
+  /* ── Featured ── */
   .featured {
-    padding-top: var(--space-32);
+    padding-block: var(--space-32);
   }
 
   .section-header {
@@ -405,123 +650,27 @@ const mapPools = (pools as Pool[]).map((p) => ({
     gap: var(--space-4);
   }
 
-  /* Pool list */
-  .pool-list {
-    padding-top: var(--space-32);
-  }
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    .map-viewport {
+      grid-template-columns: 1fr;
+      grid-template-rows: 55% 45%;
+      height: calc(100dvh - 3.5rem);
+    }
 
-  .list-items {
-    list-style: none;
-    border-top: 1px solid var(--color-border);
-  }
+    #map { height: 100%; }
 
-  .list-item {
-    border-bottom: 1px solid var(--color-border);
-  }
+    .pool-panel {
+      border-left: none;
+      border-top: 1px solid var(--color-border);
+    }
 
-  .list-link {
-    display: grid;
-    grid-template-columns: 3rem 1fr auto;
-    align-items: center;
-    gap: var(--space-6);
-    padding-block: var(--space-4);
-    text-decoration: none;
-    transition: background 0.15s;
-  }
+    .pool-item { padding-inline: var(--space-4); }
+    .panel-top { padding: var(--space-4); }
+    .panel-title em { font-size: 1.75rem; }
 
-  .list-link:hover {
-    background: color-mix(in srgb, var(--color-gelb) 8%, transparent);
-    text-decoration: none;
-  }
-
-  .list-district {
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--color-text-muted);
-    text-align: right;
-  }
-
-  .list-name {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    font-style: italic;
-    font-weight: 400;
-    color: var(--color-text);
-  }
-
-  .list-arrow {
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
-    transition: transform 0.2s, color 0.2s;
-  }
-
-  .list-link:hover .list-arrow {
-    transform: translateX(4px);
-    color: var(--color-rot);
-  }
-
-  /* Lazy reveal */
-  .lazy-section {
-    display: none;
-    border-top: 2px solid var(--color-gelb);
-    padding-block: var(--space-16);
-  }
-
-  .lazy-section.visible {
-    display: block;
-    animation: fade-slide 0.4s ease-out both;
-  }
-
-  @keyframes fade-slide {
-    from { opacity: 0; transform: translateY(-8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .lazy-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-8);
-  }
-
-  .lazy-heading {
-    font-family: var(--font-display);
-    font-size: var(--text-3xl);
-    font-style: italic;
-    letter-spacing: -0.02em;
-    color: var(--color-text);
-    text-align: center;
-  }
-
-  .lazy-result {
-    width: 100%;
-    max-width: 24rem;
-  }
-
-  .lazy-again {
-    background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    padding: var(--space-2) var(--space-6);
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-
-  .lazy-again:hover {
-    border-color: var(--color-nacht);
-    color: var(--color-nacht);
-  }
-
-  @media (max-width: 640px) {
     .manifesto-item { padding-inline: var(--space-6); }
-    .manifesto-num { font-size: clamp(2.5rem, 10vw, 4rem); }
-    .intro-foot { flex-direction: column; align-items: flex-start; }
+    .manifesto-num  { font-size: clamp(2.5rem, 10vw, 4rem); }
   }
 </style>
 
@@ -536,13 +685,18 @@ const mapPools = (pools as Pool[]).map((p) => ({
     featured: boolean
   }
 
-  const mapEl = document.getElementById('map') as HTMLDivElement
+  const mapEl    = document.getElementById('map') as HTMLDivElement
+  const listView = document.getElementById('view-list') as HTMLElement
+  const detailView = document.getElementById('view-detail') as HTMLElement
+  const backBtn  = document.getElementById('detail-back') as HTMLButtonElement
+  const lazyBtn  = document.getElementById('lazy-btn') as HTMLButtonElement
+
   const poolsData: MapPool[] = JSON.parse(mapEl.dataset.pools ?? '[]')
 
-  const map = L.map('map', {
-    zoomControl: true,
-    scrollWheelZoom: false,
-  }).setView([48.2092, 16.3728], 12)
+  // ── Leaflet map ──
+  const map = L.map('map', { zoomControl: false }).setView([48.2092, 16.3728], 12)
+
+  L.control.zoom({ position: 'bottomright' }).addTo(map)
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution:
@@ -550,53 +704,92 @@ const mapPools = (pools as Pool[]).map((p) => ({
     maxZoom: 20,
   }).addTo(map)
 
-  poolsData.forEach((pool) => {
-    const pinClass = pool.featured ? 'pool-pin pool-pin--featured' : 'pool-pin'
-    const size: [number, number] = pool.featured ? [18, 18] : [14, 14]
-    const anchor: [number, number] = pool.featured ? [9, 9] : [7, 7]
+  // Enable scroll zoom only when mouse is over the map
+  map.scrollWheelZoom.disable()
+  mapEl.addEventListener('mouseenter', () => map.scrollWheelZoom.enable())
+  mapEl.addEventListener('mouseleave', () => map.scrollWheelZoom.disable())
 
+  // ── Markers ──
+  const markers: Record<string, L.Marker> = {}
+
+  poolsData.forEach((pool) => {
     const icon = L.divIcon({
       className: '',
-      html: `<div class="${pinClass}"></div>`,
-      iconSize: size,
-      iconAnchor: anchor,
+      html: `<div class="pool-pin" data-pool-id="${pool.id}"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6],
     })
 
-    L.marker(pool.coordinates, { icon })
+    const marker = L.marker(pool.coordinates, { icon })
       .addTo(map)
       .bindTooltip(pool.name, {
         direction: 'top',
         className: 'pool-tooltip',
-        offset: [0, pool.featured ? -9 : -7],
+        offset: [0, -6],
       })
-      .on('click', () => {
-        window.location.href = `/pools/${pool.id}`
-      })
+      .on('click', () => selectPool(pool.id))
+
+    markers[pool.id] = marker
   })
-</script>
 
-<script>
-  const lazyBtn = document.getElementById('lazy-btn') as HTMLButtonElement
-  const lazySection = document.getElementById('lazy-section') as HTMLElement
-  const lazyResult = document.getElementById('lazy-result') as HTMLElement
-  const lazyAgain = document.getElementById('lazy-again') as HTMLButtonElement
-  const poolItems = Array.from(
-    document.querySelectorAll<HTMLElement>('#pool-storage [data-pool-id]'),
-  )
+  // ── Pool selection ──
+  let current: string | null = null
 
-  function pickRandom() {
-    const idx = Math.floor(Math.random() * poolItems.length)
-    lazyResult.innerHTML = poolItems[idx].innerHTML
-    if (!lazySection.classList.contains('visible')) {
-      lazySection.classList.add('visible')
-    }
-    lazySection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  function selectPool(id: string) {
+    current = id
+
+    // Update pin states
+    Object.entries(markers).forEach(([mId, marker]) => {
+      const pin = marker.getElement()?.querySelector<HTMLElement>('.pool-pin')
+      pin?.classList.toggle('active', mId === id)
+    })
+
+    // Update list item states
+    document.querySelectorAll<HTMLElement>('.pool-item').forEach((el) => {
+      el.classList.toggle('active', el.dataset.poolId === id)
+    })
+
+    // Show detail, hide others
+    document.querySelectorAll<HTMLElement>('.pool-card').forEach((el) => {
+      el.hidden = el.id !== `card-${id}`
+    })
+    listView.hidden = true
+    detailView.hidden = false
+
+    // Zoom map to pool
+    const pool = poolsData.find((p) => p.id === id)
+    if (pool) map.setView(pool.coordinates, 15, { animate: true, duration: 0.6 })
   }
 
-  lazyBtn.addEventListener('click', () => {
-    pickRandom()
-    lazyBtn.textContent = '🎲 Nochmal?'
+  function clearSelection() {
+    current = null
+
+    Object.values(markers).forEach((marker) => {
+      marker.getElement()?.querySelector<HTMLElement>('.pool-pin')?.classList.remove('active')
+    })
+    document.querySelectorAll<HTMLElement>('.pool-item').forEach((el) => el.classList.remove('active'))
+
+    document.querySelectorAll<HTMLElement>('.pool-card').forEach((el) => { el.hidden = true })
+    detailView.hidden = true
+    listView.hidden = false
+
+    map.setView([48.2092, 16.3728], 12, { animate: true, duration: 0.6 })
+  }
+
+  // ── Panel list clicks ──
+  document.querySelectorAll<HTMLElement>('.pool-item').forEach((item) => {
+    const id = item.dataset.poolId!
+    item.addEventListener('click', () => selectPool(id))
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectPool(id) }
+    })
   })
 
-  lazyAgain.addEventListener('click', pickRandom)
+  backBtn.addEventListener('click', clearSelection)
+
+  // ── Lazy mode ──
+  lazyBtn.addEventListener('click', () => {
+    const idx = Math.floor(Math.random() * poolsData.length)
+    selectPool(poolsData[idx].id)
+  })
 </script>
