@@ -48,27 +48,30 @@ const mapPools = (pools as Pool[]).map((p) => ({
 
 <style is:global>
   .pool-pin {
-    width: 22px;
-    height: 22px;
-    background: var(--color-water, #009bb5);
-    border: 3px solid white;
+    width: 14px;
+    height: 14px;
+    background: var(--color-rot);
+    border: 2px solid white;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
     cursor: pointer;
-    transition:
-      transform 0.15s ease,
-      background 0.15s ease;
+    transition: transform 0.15s, box-shadow 0.15s;
   }
 
   .pool-pin:hover {
-    transform: scale(1.35);
-    background: var(--color-deep, #005f73);
+    transform: scale(1.6);
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.3);
   }
 
   .leaflet-popup-content-wrapper {
-    border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgb(0 0 0 / 0.15) !important;
+    border-radius: 0 !important;
     padding: 0 !important;
+    border: 1px solid var(--color-border) !important;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .leaflet-popup-tip {
+    background: white !important;
   }
 
   .leaflet-popup-content {
@@ -77,46 +80,52 @@ const mapPools = (pools as Pool[]).map((p) => ({
   }
 
   .pool-popup {
-    padding: 16px 18px;
+    padding: var(--space-4) var(--space-6);
     min-width: 180px;
   }
 
   .pool-popup-name {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 1rem;
-    color: #005f73;
-    margin-bottom: 4px;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-style: italic;
+    color: var(--color-text);
+    margin-bottom: var(--space-1);
+    line-height: 1.1;
   }
 
   .pool-popup-meta {
-    font-size: 0.8rem;
-    color: #6b7280;
-    margin-bottom: 6px;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-3);
   }
 
   .pool-popup-hours {
-    font-size: 0.8rem;
-    color: #1a1a2e;
-    margin-bottom: 12px;
-    line-height: 1.5;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    line-height: 1.6;
   }
 
   .pool-popup-link {
     display: inline-block;
-    background: #009bb5;
-    color: white !important;
-    padding: 5px 14px;
-    border-radius: 999px;
-    font-size: 0.8rem;
+    background: var(--color-gelb);
+    color: var(--color-nacht) !important;
+    padding: var(--space-2) var(--space-6);
+    font-size: var(--text-xs);
     font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     text-decoration: none !important;
-    transition: background 0.2s;
+    transition: background 0.2s, color 0.2s;
   }
 
   .pool-popup-link:hover {
-    background: #005f73 !important;
+    background: var(--color-nacht) !important;
+    color: var(--color-gelb) !important;
     text-decoration: none !important;
-    color: white !important;
   }
 </style>
 
@@ -128,7 +137,8 @@ const mapPools = (pools as Pool[]).map((p) => ({
   .map-title {
     font-family: var(--font-display);
     font-size: var(--text-4xl);
-    color: var(--color-deep);
+    font-style: italic;
+    color: var(--color-text);
     letter-spacing: -0.02em;
     margin-bottom: var(--space-2);
   }
@@ -189,9 +199,9 @@ const mapPools = (pools as Pool[]).map((p) => ({
   const poolIcon = L.divIcon({
     className: '',
     html: '<div class="pool-pin"></div>',
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
-    popupAnchor: [0, -14],
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -10],
   })
 
   poolsData.forEach((pool) => {
